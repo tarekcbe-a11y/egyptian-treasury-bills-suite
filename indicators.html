@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>مؤشرات أذون الخزانة المصرية</title>
+
+<style>
+:root{
+  --bg:#0c1730;
+  --panel:#14213d;
+  --gold:#d5b13d;
+  --light:#f4d875;
+  --muted:#b8c2d5;
+  --line:#8d793b;
+  --green:#42d987;
+  --red:#ff7777;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  min-height:100%;
+  width:100%;
+  background:#0f172a;
+  color:#f2f2f2;
+  font-family:Tahoma,Arial,sans-serif;
+}
+body{padding:5px;line-height:1.45}
+button{font:inherit;cursor:pointer}
+.app{
+  width:100%;
+  max-width:520px;
+  min-height:calc(100dvh - 10px);
+  margin:auto;
+  background:var(--bg);
+  border:1.5px solid var(--gold);
+  border-radius:17px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 16px rgba(213,177,61,.12);
+}
+.header{
+  direction:ltr;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:12px 10px;
+  background:#101d38;
+  border-bottom:2px solid var(--gold);
+  min-width:0;
+}
+.logo{width:44px;height:44px;object-fit:contain;display:block}
+.header-info{direction:rtl;text-align:center;min-width:0}
+.brand{font-size:clamp(14px,3.8vw,21px);font-weight:800;color:var(--gold);line-height:1.5;text-align:center}
+.group-name{font-size:11px;color:#f4d875;margin-top:2px;text-align:center}
+.subtitle{font-size:9px;color:#c9d3e5;margin-top:3px;line-height:1.5;text-align:center}
+.status{direction:rtl;display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;font-size:9px;color:#baf5d0;text-align:center}
+.status-dot{font-size:10px}
+main{padding:9px 8px;flex:1;min-height:0;background:#0c1730}
+.page{display:none}
+.page.active{display:block}
+.actions{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:10px}
+.btn,.term{border:1px solid var(--gold);background:#172746;color:var(--gold);border-radius:9px;font-weight:700;padding:8px 5px;min-width:0}
+.btn{min-height:39px;font-size:13px}
+.btn:active,.term:active{transform:scale(.99)}
+.heading{display:flex;align-items:center;justify-content:space-between;gap:5px;margin:10px 0 8px;padding-right:8px;border-right:3px solid var(--gold);font-size:16px;font-weight:800;color:var(--gold)}
+.note{font-size:10px;color:var(--muted);font-weight:400}
+.terms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:9px 0 10px}
+.term{min-height:37px;font-size:12px;padding:6px 2px}
+.term.active{background:var(--gold);color:#101a2d;border-color:var(--light)}
+.table-card{border:1px solid var(--gold);border-radius:12px;overflow:hidden;background:#14213d}
+.table-title{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:8px 7px;background:#101d38;border-bottom:1px solid var(--gold);font-size:12px;font-weight:700;color:var(--gold)}
+.count{font-size:10px;color:#e4d7a8;white-space:nowrap;font-weight:400}
+.table-scroll{height:clamp(210px,38dvh,330px);overflow-y:auto;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d5b13d #172746}
+table{width:100%;min-width:300px;border-collapse:collapse;table-layout:fixed;text-align:center}
+th{position:sticky;top:0;z-index:1;background:#1a2b4b;color:#f4d875;font-size:clamp(9px,2.6vw,11px);padding:8px 2px;border:1px solid #9d8337;line-height:1.4;overflow-wrap:anywhere}
+td{background:#192b49;color:#f1f4fa;font-size:clamp(9px,2.65vw,12px);font-weight:700;padding:9px 2px;border:1px solid #42516b;line-height:1.4;overflow-wrap:anywhere}
+tbody tr:nth-child(even) td{background:#14233e}
+tbody tr:hover td{background:#293b59}
+th,td{width:25%}
+td.session{color:#f0d575}
+td.yield{color:var(--green);font-weight:800}
+.message{padding:18px 5px;color:var(--muted);font-size:11px;text-align:center}
+.message.error{color:var(--red)}
+.info-card{margin:8px 0;border:1px solid var(--gold);border-radius:10px;background:#142440;padding:10px 9px}
+.info-card h3{margin:0 0 5px;color:var(--gold);font-size:13px}
+.info-card p{margin:0;color:#eeeeee;font-size:12px;line-height:1.8}
+.footer{text-align:center;background:#101d38;border-top:1px solid var(--gold);padding:6px}
+.developer{font-size:9px;color:#b8c2d5}
+.nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;background:#101d38;border-top:1px solid var(--gold);padding:5px;padding-bottom:max(5px,env(safe-area-inset-bottom))}
+.nav button{background:transparent;color:#b8c2d5;border:0;border-radius:9px;padding:5px 2px;font-size:11px;min-height:49px}
+.nav button span{display:block;font-size:18px;line-height:1.2;margin-bottom:3px}
+.nav button.active{background:#29334a;color:var(--gold)}
+@media(max-width:360px){
+  body{padding:3px}
+  .app{min-height:calc(100dvh - 6px);border-radius:13px}
+  main{padding:7px 5px}
+  .header{grid-template-columns:36px minmax(0,1fr) auto;gap:5px;padding:10px 5px}
+  .logo{width:35px;height:35px}
+  .brand{font-size:13px}
+  .group-name{font-size:9px}
+  .subtitle{font-size:8px}
+  .status{font-size:8px;gap:2px}
+  .heading{font-size:14px}
+  .term{font-size:11px;min-height:35px}
+  .table-title{font-size:11px}
+  .nav button{font-size:10px;min-height:46px}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="header">
+  <img class="logo" src="./logo.png"
+       alt="شعار جروب عملاء البنوك المصرية"
+       onerror="this.style.display='none'">
+
+  <div class="header-info">
+    <div class="brand">مؤشرات أذون الخزانة المصرية</div>
+    <div class="group-name">جروب عملاء البنوك المصرية</div>
+    <div class="subtitle">
+      متابعة نتائج العطاءات والعوائد وفق البيانات الرسمية
+    </div>
+  </div>
+
+  <div class="status" id="status">
+    <span class="status-dot">●</span>
+    <span>جاري الاتصال</span>
+  </div>
+</header>
+
+<main>
+
+<section class="page active" id="home">
+  <div class="actions">
+    <button class="btn" onclick="fetchData()">⟳ تحديث البيانات</button>
+  </div>
+
+  <div class="heading">
+    <span>الرئيسية</span>
+    <span class="note" id="updated">—</span>
+  </div>
+
+  <div class="terms" id="terms-main"></div>
+
+  <div class="table-card">
+    <div class="table-title">
+      <span id="main-title">سجل النتائج</span>
+      <span class="count" id="main-count">0 نتيجة</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>تاريخ الجلسة</th>
+            <th>تاريخ الإصدار</th>
+            <th>تاريخ الاستحقاق</th>
+            <th>متوسط العائد %</th>
+          </tr>
+        </thead>
+        <tbody id="main-body">
+          <tr><td colspan="4" class="message">جاري تحميل البيانات...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="history">
+  <div class="actions">
+    <button class="btn" onclick="fetchData()">⟳ تحديث البيانات</button>
+  </div>
+
+  <div class="heading">البيانات التاريخية</div>
+  <p class="note">اختر أجلًا لعرض سجلاته المتاحة من المصدر.</p>
+  <div class="terms" id="terms-history"></div>
+
+  <div class="table-card">
+    <div class="table-title">
+      <span id="history-title">السجل التاريخي</span>
+      <span class="count" id="history-count">0 نتيجة</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>تاريخ الجلسة</th>
+            <th>تاريخ الإصدار</th>
+            <th>تاريخ الاستحقاق</th>
+            <th>متوسط العائد %</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <tr><td colspan="4" class="message">جاري تحميل البيانات...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="guide">
+  <div class="heading">دليل أذون الخزانة</div>
+
+  <div class="info-card">
+    <h3>تاريخ الجلسة</h3>
+    <p>التاريخ الذي أُجري فيه العطاء وأُعلنت نتائجه.</p>
+  </div>
+
+  <div class="info-card">
+    <h3>تاريخ الإصدار</h3>
+    <p>التاريخ الذي يبدأ منه إصدار أذون الخزانة وفق بيانات العطاء.</p>
+  </div>
+
+  <div class="info-card">
+    <h3>تاريخ الاستحقاق</h3>
+    <p>التاريخ المحدد لانتهاء أجل الإذن وسداد قيمته الاسمية وفق شروط الإصدار.</p>
+  </div>
+
+  <div class="info-card">
+    <h3>متوسط العائد</h3>
+    <p>متوسط العائد المنشور لنتيجة العطاء، كما يرد في جدول المصدر.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="developer">Developed by Tarek Metwally</div>
+</footer>
+
+<nav class="nav">
+  <button class="active" data-nav="home" onclick="go('home')">
+    <span>⌂</span>الرئيسية
+  </button>
+  <button data-nav="history" onclick="go('history')">
+    <span>▤</span>التاريخية
+  </button>
+  <button data-nav="guide" onclick="go('guide')">
+    <span>ⓘ</span>الدليل
+  </button>
+</nav>
+
+</div>
+<script>
+"use strict";
+
+/* مصدر بيانات Google Sheets */
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vQp4jGbTtNydAA3tCX7s3W_xhVPnMCkgiR-xpCvCFoNbhcta59z3sWQPwcCaPoO3FTEEEazLDaeoOjZ/pub?gid=0&single=true&output=csv";
+
+/* آجال أذون الخزانة */
+const TERMS = [
+  91, 182, 273, 364, 357
+];
+
+let allRows = [];
+let selectedMain = 91;
+let selectedHistory = 91;
+let currentPage = "home";
+
+/* التنقل بين الصفحات */
+function go(page){
+  currentPage = page;
+
+  document.querySelectorAll(".page").forEach(el=>{
+    el.classList.toggle("active",el.id===page);
+  });
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.nav===page
+    );
+  });
+
+  if(page==="history"){
+    renderHistory();
+  }
+
+  if(page==="home"){
+    renderMain();
+  }
+}
+
+/* قراءة CSV */
+function parseCSV(text){
+  const rows=[];
+  let row=[];
+  let cell="";
+  let quoted=false;
+
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    const next=text[i+1];
+
+    if(c==='"'){
+      if(quoted && next==='"'){
+        cell+='"';
+        i++;
+      }else{
+        quoted=!quoted;
+      }
+    }
+    else if(c===',' && !quoted){
+      row.push(cell.trim());
+      cell="";
+    }
+    else if((c==='\n'||c==='\r')&&!quoted){
+      if(c==='\r'&&next==='\n')i++;
+      row.push(cell.trim());
+
+      if(row.some(v=>v!=="")){
+        rows.push(row);
+      }
+
+      row=[];
+      cell="";
+    }
+    else{
+      cell+=c;
+    }
+  }
+
+  row.push(cell.trim());
+
+  if(row.some(v=>v!=="")){
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+/* تنظيف النص */
+function clean(value){
+  return String(value??"")
+    .replace(/^\uFEFF/,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+/* تحويل الأرقام العربية */
+function normalizeNumber(value){
+  const map={
+    "٠":"0","١":"1","٢":"2","٣":"3","٤":"4",
+    "٥":"5","٦":"6","٧":"7","٨":"8","٩":"9",
+    "٫":".","٬":","
+  };
+
+  return String(value??"").replace(
+    /[٠-٩٫٬]/g,
+    c=>map[c]
+  );
+}
+
+/* توحيد مدة الإذن */
+function normalizeTerm(value){
+  const s=normalizeNumber(clean(value));
+
+  const match=s.match(/\d+/);
+
+  if(!match)return null;
+
+  const n=Number(match[0]);
+
+  if([91,182,273,364,357].includes(n)){
+    return n;
+  }
+
+  return n;
+}
+
+/* تحديد الآجال الأخرى */
+function isOther(term){
+  return !TERMS.includes(Number(term));
+}
+
+/* تحويل التاريخ إلى رقم */
+function dateNum(value){
+  const s=clean(value);
+
+  if(!s)return 0;
+
+  let d;
+
+  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)){
+    d=new Date(s);
+  }
+  else if(/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/.test(s)){
+    const p=s.split(/[\/-]/);
+    d=new Date(Number(p[2]),Number(p[1])-1,Number(p[0]));
+  }
+  else{
+    d=new Date(s);
+  }
+
+  if(Number.isNaN(d.getTime()))return 0;
+
+  return d.getTime();
+}
+
+/* ترتيب السجلات */
+function sortRows(rows){
+  return rows.sort((a,b)=>{
+    return dateNum(b.session)-dateNum(a.session);
+  });
+}
+
+/* استخراج بيانات السطر */
+function rowsFor(data){
+
+  if(!data.length)return [];
+
+  const headers=data[0].map(clean);
+
+  const findIndex=(patterns)=>{
+    return headers.findIndex(h=>
+      patterns.some(p=>p.test(h))
+    );
+  };
+
+  const sessionIndex=findIndex([
+    /جلسة/,
+    /العطاء/,
+    /تاريخ.*طرح/,
+    /session/
+  ]);
+
+  const issueIndex=findIndex([
+    /إصدار/,
+    /الاصدار/,
+    /بداية/,
+    /issue/
+  ]);
+
+  const maturityIndex=findIndex([
+    /استحقاق/,
+    /maturity/
+  ]);
+
+  const termIndex=findIndex([
+    /مدة/,
+    /أجل/,
+    /اجل/,
+    /term/,
+    /days/
+  ]);
+
+  const yieldIndex=findIndex([
+    /متوسط.*عائد/,
+    /العائد.*متوسط/,
+    /weighted.*yield/,
+    /yield/
+  ]);
+
+  const result=[];
+
+  for(let i=1;i<data.length;i++){
+
+    const r=data[i];
+
+    if(!r||!r.length)continue;
+
+    const term=termIndex>=0
+      ?normalizeTerm(r[termIndex])
+      :null;
+
+    const session=sessionIndex>=0
+      ?clean(r[sessionIndex])
+      :"";
+
+    const issue=issueIndex>=0
+      ?clean(r[issueIndex])
+      :"";
+
+    const maturity=maturityIndex>=0
+      ?clean(r[maturityIndex])
+      :"";
+
+    const yieldValue=yieldIndex>=0
+      ?clean(r[yieldIndex])
+      :"";
+
+    if(!term||!yieldValue)continue;
+
+    result.push({
+      term,
+      session,
+      issue,
+      maturity,
+      yieldValue
+    });
+  }
+
+  return sortRows(result);
+}
+
+/* إنشاء أزرار الآجال */
+function renderTerms(){
+
+  const main=document.getElementById("terms-main");
+  const history=document.getElementById("terms-history");
+
+  main.innerHTML="";
+  history.innerHTML="";
+
+  TERMS.forEach(term=>{
+
+    const b=document.createElement("button");
+    b.className="term";
+    b.textContent=term+" يوم";
+
+    b.classList.toggle(
+      "active",
+      term===selectedMain
+    );
+
+    b.onclick=()=>{
+      selectedMain=term;
+      renderTerms();
+      renderMain();
+    };
+
+    main.appendChild(b);
+
+    const h=document.createElement("button");
+    h.className="term";
+    h.textContent=term+" يوم";
+
+    h.classList.toggle(
+      "active",
+      term===selectedHistory
+    );
+
+    h.onclick=()=>{
+      selectedHistory=term;
+      renderTerms();
+      renderHistory();
+    };
+
+    history.appendChild(h);
+  });
+}
+
+/* عرض الجدول */
+function renderTable(target,rows){
+
+  const body=document.getElementById(target);
+
+  body.innerHTML="";
+
+  if(!rows.length){
+    body.innerHTML=
+      '<tr><td colspan="4" class="message">لا توجد بيانات متاحة لهذا الأجل</td></tr>';
+    return;
+  }
+
+  rows.forEach(item=>{
+
+    const tr=document.createElement("tr");
+
+    const values=[
+      item.session,
+      item.issue,
+      item.maturity,
+      item.yieldValue
+    ];
+
+    values.forEach((value,index)=>{
+
+      const td=document.createElement("td");
+
+      td.textContent=value||"—";
+
+      if(index===0)td.className="session";
+      if(index===3)td.className="yield";
+
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+}
+
+/* عرض المؤشرات الرئيسية */
+function renderMain(){
+
+  const rows=allRows.filter(r=>
+    Number(r.term)===selectedMain
+  );
+
+  document.getElementById("main-title").textContent=
+    "نتائج أذون "+selectedMain+" يوم";
+
+  document.getElementById("main-count").textContent=
+    rows.length+" نتيجة";
+
+  renderTable("main-body",rows);
+}
+
+/* عرض السجل التاريخي */
+function renderHistory(){
+
+  const rows=allRows.filter(r=>
+    Number(r.term)===selectedHistory
+  );
+
+  document.getElementById("history-title").textContent=
+    "السجل التاريخي - "+selectedHistory+" يوم";
+
+  document.getElementById("history-count").textContent=
+    rows.length+" نتيجة";
+
+  renderTable("history-body",rows);
+}
+
+/* تحديث حالة الاتصال */
+function setStatus(message,success){
+
+  const status=document.getElementById("status");
+
+  status.innerHTML=
+    '<span class="status-dot">'+
+    (success?"●":"●")+
+    '</span><span>'+message+'</span>';
+
+  status.style.color=success?"#42d987":"#ff7777";
+}
+
+/* جلب البيانات */
+async function fetchData(){
+
+  setStatus("جاري تحديث البيانات",false);
+
+  const mainBody=document.getElementById("main-body");
+
+  mainBody.innerHTML=
+    '<tr><td colspan="4" class="message">جاري تحميل البيانات...</td></tr>';
+
+  try{
+
+    const response=await fetch(
+      CSV_URL+"&cache="+Date.now(),
+      {cache:"no-store"}
+    );
+
+    if(!response.ok){
+      throw new Error("HTTP "+response.status);
+    }
+
+    const text=await response.text();
+
+    if(!text.trim()){
+      throw new Error("مصدر البيانات فارغ");
+    }
+
+    const csv=parseCSV(text);
+
+    if(csv.length<2){
+      throw new Error("لا توجد سجلات كافية");
+    }
+
+    const parsed=rowsFor(csv);
+
+    if(!parsed.length){
+      throw new Error("لم يتم التعرف على أعمدة البيانات");
+    }
+
+    allRows=parsed;
+
+    renderTerms();
+    renderMain();
+    renderHistory();
+
+    document.getElementById("updated").textContent=
+      "آخر تحديث: "+new Date().toLocaleString("ar-EG");
+
+    setStatus("البيانات محدثة",true);
+
+  }catch(error){
+
+    console.error("Data loading error:",error);
+
+    setStatus("تعذر الاتصال بمصدر البيانات",false);
+
+    mainBody.innerHTML=
+      '<tr><td colspan="4" class="message error">'+
+      "تعذر تحميل البيانات. تحقق من اتصال الإنترنت ومشاركة جدول Google Sheets."+
+      '</td></tr>';
+
+    document.getElementById("history-body").innerHTML=
+      '<tr><td colspan="4" class="message error">'+
+      "تعذر تحميل السجل التاريخي."+
+      '</td></tr>';
+  }
+}
+
+/* تشغيل التطبيق */
+renderTerms();
+fetchData();
+
+</script>
+
+</body>
+</html>
