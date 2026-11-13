@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+
+<title>حاسبة ومؤشرات أذون الخزانة المصرية</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  padding:15px;
+  min-height:100vh;
+  background:#0f172a;
+  color:#fff;
+  font-family:Tahoma,Arial,sans-serif;
+}
+
+.container{
+  width:100%;
+  max-width:520px;
+  min-height:calc(100vh - 30px);
+  margin:auto;
+  padding:25px 18px;
+  background:#1e293b;
+  border:2px solid #d5b13d;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo{
+  width:100px;
+  height:100px;
+  object-fit:contain;
+  margin-bottom:15px;
+}
+
+.title{
+  color:#f4d875;
+  font-size:21px;
+  font-weight:bold;
+  text-align:center;
+  line-height:1.7;
+}
+
+.group-name{
+  color:#fff;
+  font-size:14px;
+  margin:8px 0 30px;
+  text-align:center;
+}
+
+.menu{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.menu a{
+  display:block;
+  padding:19px 12px;
+  text-align:center;
+  text-decoration:none;
+  color:#f4d875;
+  background:#0f172a;
+  border:1.5px solid #d5b13d;
+  border-radius:13px;
+  font-size:18px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.menu a:active{
+  transform:scale(.98);
+  background:#243653;
+}
+
+.menu small{
+  display:block;
+  color:#cbd5e1;
+  font-size:12px;
+  font-weight:normal;
+  margin-top:8px;
+  line-height:1.6;
+}
+
+.footer{
+  margin-top:35px;
+  color:#f4d875;
+  font-size:11px;
+  text-align:center;
+  line-height:2;
+}
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+  <img src="logo.png" class="logo" alt="شعار الجروب">
+
+  <div class="title">
+    حاسبة ومؤشرات أذون الخزانة المصرية
+  </div>
+
+  <div class="group-name">
+    جروب عملاء البنوك المصرية
+  </div>
+
+  <nav class="menu">
+
+    <a href="calculator.html">
+      حاسبة أذون الخزانة
+      <small>
+        حساب عوائد الأذون في السوق الأولي والثانوي
+      </small>
+    </a>
+
+    <a href="indicators.html">
+      مؤشرات أذون الخزانة
+      <small>
+        متابعة الأسعار والعوائد والبيانات التاريخية
+      </small>
+    </a>
+
+  </nav>
+
+  <footer class="footer">
+    جروب عملاء البنوك المصرية
+    <br>
+    Developed by Tarek Metwally
+  </footer>
+
+</main>
+
+</body>
+</html>
