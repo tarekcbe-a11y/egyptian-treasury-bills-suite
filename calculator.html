@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a">
+
+<title>حاسبة أذون الخزانة المصرية</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ padding:12px;
+ background:#0f172a;
+ color:#fff;
+ font-family:Tahoma,Arial,sans-serif;
+}
+
+.container{
+ max-width:520px;
+ min-height:calc(100vh - 24px);
+ margin:auto;
+ padding:17px;
+ background:#1e293b;
+ border:2px solid #d5b13d;
+ border-radius:18px;
+}
+
+.back{
+ display:block;
+ text-align:center;
+ padding:10px;
+ margin-bottom:15px;
+ background:#0f172a;
+ border:1px solid #d5b13d;
+ border-radius:8px;
+ color:#f4d875;
+ text-decoration:none;
+ font-size:13px;
+}
+
+.header{
+ text-align:center;
+ margin-bottom:18px;
+}
+
+.logo{
+ width:65px;
+ height:65px;
+ object-fit:contain;
+}
+
+.title{
+ color:#f4d875;
+ font-size:19px;
+ font-weight:bold;
+ margin-top:8px;
+}
+
+.group{
+ color:#fff;
+ font-size:12px;
+ margin-top:5px;
+}
+
+.lang{
+ display:block;
+ margin:12px auto;
+ padding:7px 16px;
+ border:1px solid #d5b13d;
+ border-radius:7px;
+ background:#d5b13d;
+ color:#111;
+ font-weight:bold;
+}
+
+.market{
+ display:flex;
+ gap:8px;
+ margin:15px 0;
+}
+
+.market button{
+ flex:1;
+ padding:11px 5px;
+ border:1px solid #d5b13d;
+ border-radius:8px;
+ background:#0f172a;
+ color:#f4d875;
+ font-weight:bold;
+}
+
+.market button.active{
+ background:#d5b13d;
+ color:#111;
+}
+
+label{
+ display:block;
+ margin:12px 0 5px;
+ color:#f4d875;
+ font-size:13px;
+}
+
+input,select{
+ width:100%;
+ padding:12px;
+ border:1px solid #d5b13d;
+ border-radius:8px;
+ background:#0f172a;
+ color:#fff;
+ font-size:15px;
+ outline:none;
+}
+
+.calculate{
+ width:100%;
+ padding:13px;
+ margin-top:17px;
+ border:0;
+ border-radius:9px;
+ background:#d5b13d;
+ color:#111;
+ font-size:16px;
+ font-weight:bold;
+}
+
+.results{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:9px;
+ margin-top:18px;
+}
+
+.card{
+ background:#0f172a;
+ border:1px solid #8d793b;
+ border-radius:9px;
+ padding:12px 5px;
+ text-align:center;
+}
+
+.card span{
+ display:block;
+ color:#cbd5e1;
+ font-size:11px;
+ margin-bottom:8px;
+}
+
+.card strong{
+ color:#f4d875;
+ font-size:14px;
+ overflow-wrap:anywhere;
+}
+
+.total{
+ margin-top:12px;
+ padding:14px 8px;
+ border:2px solid #d5b13d;
+ border-radius:10px;
+ text-align:center;
+ background:#14213d;
+}
+
+.total span{
+ color:#cbd5e1;
+ font-size:12px;
+}
+
+.total strong{
+ display:block;
+ color:#f4d875;
+ font-size:20px;
+ margin-top:8px;
+}
+
+.yield{
+ margin-top:10px;
+ color:#42d987;
+ font-size:13px;
+}
+
+.footer{
+ text-align:center;
+ color:#f4d875;
+ font-size:11px;
+ margin-top:22px;
+ padding-top:12px;
+ border-top:1px solid #8d793b;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a href="index.html" class="back">
+العودة إلى القائمة الرئيسية
+</a>
+
+<div class="header">
+<img src="logo.png" class="logo" alt="شعار الجروب">
+<div class="title" id="title">حاسبة أذون الخزانة</div>
+<div class="group" id="group">جروب عملاء البنوك المصرية</div>
+</div>
+
+<button class="lang" onclick="toggleLang()" id="langBtn">
+English
+</button>
+
+<div class="market">
+<button id="primaryBtn" class="active" onclick="setMarket('primary')">
+السوق الأولي
+</button>
+
+<button id="secondaryBtn" onclick="setMarket('secondary')">
+السوق الثانوي
+</button>
+</div>
+
+<label id="nominalLabel">القيمة الاسمية بالجنيه</label>
+<input id="nominal" type="text" inputmode="decimal"
+placeholder="أدخل القيمة الاسمية">
+
+<label id="rateLabel">سعر العائد السنوي %</label>
+<input id="rate" type="number" inputmode="decimal"
+step="0.001" placeholder="أدخل سعر العائد">
+
+<label id="daysLabel">مدة الإذن بالأيام</label>
+<select id="days"></select>
+
+<button class="calculate" onclick="calculate()" id="calcBtn">
+احسب الآن
+</button>
+
+<div class="results">
+
+<div class="card">
+<span id="priceLabel">سعر الشراء</span>
+<strong id="price">0.00</strong>
+</div>
+
+<div class="card">
+<span id="discountLabel">مبلغ الخصم</span>
+<strong id="discount">0.00</strong>
+</div>
+
+<div class="card">
+<span id="taxLabel">الضريبة 20%</span>
+<strong id="tax">0.00</strong>
+</div>
+
+<div class="card">
+<span id="profitLabel">صافي الربح</span>
+<strong id="profit">0.00</strong>
+</div>
+
+</div>
+
+<div class="total">
+<span id="totalLabel">المبلغ المسترد عند الاستحقاق</span>
+<strong id="total">0.00</strong>
+
+<div class="yield">
+<span id="yieldLabel">العائد السنوي الصافي</span>
+<strong id="yield">0.00%</strong>
+</div>
+</div>
+
+<div class="footer">
+جروب عملاء البنوك المصرية
+<br>
+Developed by Tarek Metwally
+</div>
+
+</div>
+
+<script>
+let market='primary';
+let arabic=true;
+
+const translations={
+ ar:{
+  title:'حاسبة أذون الخزانة',
+  group:'جروب عملاء البنوك المصرية',
+  primary:'السوق الأولي',
+  secondary:'السوق الثانوي',
+  nominal:'القيمة الاسمية بالجنيه',
+  rate:'سعر العائد السنوي %',
+  days:'مدة الإذن بالأيام',
+  calc:'احسب الآن',
+  price:'سعر الشراء',
+  discount:'مبلغ الخصم',
+  tax:'الضريبة 20%',
+  profit:'صافي الربح',
+  total:'المبلغ المسترد عند الاستحقاق',
+  yield:'العائد السنوي الصافي',
+  invalid:'يرجى إدخال بيانات صحيحة'
+ },
+ en:{
+  title:'Treasury Bills Calculator',
+  group:'Egyptian Bank Clients Group',
+  primary:'Primary Market',
+  secondary:'Secondary Market',
+  nominal:'Nominal Value (EGP)',
+  rate:'Annual Yield %',
+  days:'Bill Duration (Days)',
+  calc:'Calculate',
+  price:'Purchase Price',
+  discount:'Discount Amount',
+  tax:'Tax 20%',
+  profit:'Net Profit',
+  total:'Amount at Maturity',
+  yield:'Net Annual Yield',
+  invalid:'Please enter valid values'
+ }
+};
+
+function numberValue(value){
+ let map={
+  '٠':'0','١':'1','٢':'2','٣':'3','٤':'4',
+  '٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
+  '٫':'.','٬':','
+ };
+ let s=String(value||'').replace(/[٠-٩٫٬]/g,c=>map[c]);
+ return parseFloat(s.replace(/,/g,'').replace(/[^0-9.]/g,''))||0;
+}
+
+function setMarket(type){
+ market=type;
+
+ document.getElementById('primaryBtn').classList.toggle(
+  'active',type==='primary'
+ );
+
+ document.getElementById('secondaryBtn').classList.toggle(
+  'active',type==='secondary'
+ );
+
+ let select=document.getElementById('days');
+ select.innerHTML='';
+
+ let values=type==='primary'
+  ?[91,182,273,364]
+  :Array.from({length:364},(_,i)=>i+1);
+
+ values.forEach(day=>{
+  let option=document.createElement('option');
+  option.value=day;
+  option.textContent=day+(arabic?' يوم':' Days');
+  select.appendChild(option);
+ });
+}
+
+function calculate(){
+
+ let P=numberValue(document.getElementById('nominal').value);
+ let R=numberValue(document.getElementById('rate').value)/100;
+ let D=Number(document.getElementById('days').value);
+
+ if(P<=0||R<=0||D<=0){
+  alert(translations[arabic?'ar':'en'].invalid);
+  return;
+ }
+
+ // معادلة حساب أذون الخزانة الأصلية
+ let purchasePrice=P/(1+(R*D/365));
+
+ let discount=P-purchasePrice;
+ let tax=discount*0.20;
+ let netProfit=discount-tax;
+ let finalAmount=purchasePrice+netProfit;
+ let annualYield=(netProfit/purchasePrice)*(365/D)*100;
+
+ const format=n=>n.toLocaleString('en-US',{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ });
+
+ document.getElementById('price').textContent=format(purchasePrice);
+ document.getElementById('discount').textContent=format(discount);
+ document.getElementById('tax').textContent=format(tax);
+ document.getElementById('profit').textContent=format(netProfit);
+ document.getElementById('total').textContent=format(finalAmount);
+ document.getElementById('yield').textContent=annualYield.toFixed(2)+'%';
+}
+
+function toggleLang(){
+
+ arabic=!arabic;
+
+ document.documentElement.lang=arabic?'ar':'en';
+ document.documentElement.dir=arabic?'rtl':'ltr';
+
+ let t=translations[arabic?'ar':'en'];
+
+ document.getElementById('title').textContent=t.title;
+ document.getElementById('group').textContent=t.group;
+ document.getElementById('primaryBtn').textContent=t.primary;
+ document.getElementById('secondaryBtn').textContent=t.secondary;
+ document.getElementById('nominalLabel').textContent=t.nominal;
+ document.getElementById('rateLabel').textContent=t.rate;
+ document.getElementById('daysLabel').textContent=t.days;
+ document.getElementById('calcBtn').textContent=t.calc;
+ document.getElementById('priceLabel').textContent=t.price;
+ document.getElementById('discountLabel').textContent=t.discount;
+ document.getElementById('taxLabel').textContent=t.tax;
+ document.getElementById('profitLabel').textContent=t.profit;
+ document.getElementById('totalLabel').textContent=t.total;
+ document.getElementById('yieldLabel').textContent=t.yield;
+ document.getElementById('langBtn').textContent=arabic?'English':'العربية';
+
+ setMarket(market);
+}
+
+document.getElementById('nominal').addEventListener('input',function(){
+ let value=numberValue(this.value);
+ if(value>0){
+  this.value=value.toLocaleString('en-US');
+ }
+});
+
+setMarket('primary');
+</script>
+
+</body>
+</html>
